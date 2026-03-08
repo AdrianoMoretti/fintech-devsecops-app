@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/SEU_USUARIO/fintech-devsecops-app.git', credentialsId: 'github-token'
+                git branch: 'main', url: 'https://github.com/AdrianoMoretti/fintech-devsecops-app.git', credentialsId: 'github-token'
             }
         }
         stage('Build Docker Image') {
