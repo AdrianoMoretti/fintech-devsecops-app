@@ -1,16 +1,21 @@
 pipeline {
     agent any
+
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub')
-        IMAGE_NAME = "fintech-devsecops-app"
+        IMAGE_NAME = "adrianomoretti/fintech-devsecops-app"
         IMAGE_TAG = "latest"
     }
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/AdrianoMoretti/fintech-devsecops-app.git', credentialsId: 'github-token'
+                git branch: 'main',
+                    url: 'https://github.com/AdrianoMoretti/fintech-devsecops-app.git',
+                    credentialsId: 'github-token'
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -18,13 +23,16 @@ pipeline {
                 }
             }
         }
+
         stage('Security Scan') {
             steps {
-                sh '''
-                docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69 image ${IMAGE_NAME}:${IMAGE_TAG}
-                '''
+                script {
+                    // Executa Trivy no container
+                    sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --exit-code 1 ${IMAGE_NAME}:${IMAGE_TAG}"
+                }
             }
         }
+
         stage('Push to Docker Hub') {
             steps {
                 script {
@@ -34,12 +42,23 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy to Kubernetes') {
             steps {
-                sh '''
-                kubectl set image deployment/fintech-app fintech-app=${DOCKERHUB_CREDENTIALS_USR}/${IMAGE_NAME}:${IMAGE_TAG} -n default
-                '''
+                script {
+                    sh 'kubectl apply -f k8s/deployment.yaml -n default'
+                    sh 'kubectl rollout restart deployment fintech-devsecops-app -n default'
+                }
             }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline finalizado. Status: ${currentBuild.currentResult}"
+        }
+        failure {
+            echo "Pipeline falhou. Verifique os logs para detalhes."
         }
     }
 }
