@@ -1,0 +1,35 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: fintech-gateway
+  namespace: default
+spec:
+  selector:
+    istio: ingressgateway # usa o ingressgateway do Istio
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: fintech-virtualservice
+  namespace: default
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - fintech-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: fintech-devsecops-app-service
+        port:
+          number: 5000
