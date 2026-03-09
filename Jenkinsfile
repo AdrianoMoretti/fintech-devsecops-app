@@ -5,7 +5,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub')
         IMAGE_NAME = "adrianomoretti/fintech-devsecops-app"
         IMAGE_TAG = "latest"
-        KUBECONFIG = "/var/lib/jenkins/.kube/config" // variável para kubectl
+        KUBECONFIG = '/var/lib/jenkins/.kube/config'
     }
 
     stages {
@@ -28,7 +28,7 @@ pipeline {
         stage('Security Scan') {
             steps {
                 script {
-                    // Executa Trivy mas ignora o exit code para não quebrar pipeline
+                    // Executa Trivy no container mas ignora falhas
                     sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --exit-code 0 ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
@@ -47,9 +47,27 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // Usa o KUBECONFIG do Jenkins para aplicar os manifests
                     sh 'kubectl apply -f k8s/deployment.yaml -n default'
                     sh 'kubectl rollout restart deployment fintech-devsecops-app -n default'
+                }
+            }
+        }
+
+        stage('Smoke Test') {
+            steps {
+                script {
+                    // Testa se a aplicação respondeu corretamente
+                    sh """
+                    echo "Esperando 10s para o pod iniciar..."
+                    sleep 10
+                    RESPONSE=\$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000)
+                    if [ "\$RESPONSE" != "200" ]; then
+                        echo "Smoke Test falhou! Status code: \$RESPONSE"
+                        exit 1
+                    else
+                        echo "Smoke Test OK! Status code: \$RESPONSE"
+                    fi
+                    """
                 }
             }
         }
