@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-service
+  labels:
+    app: monitoring-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monitoring-service
+  template:
+    metadata:
+      labels:
+        app: monitoring-service
+    spec:
+      containers:
+      - name: monitoring-service
+        image: docker.io/adrianomoretti/fintech-devsecops-app:monitoring-service
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        env:
+          - name: APP_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: monitoring-service-config
+                key: APP_NAME
+          - name: APP_ENV
+            valueFrom:
+              configMapKeyRef:
+                name: monitoring-service-config
+                key: APP_ENV
+          - name: LOG_LEVEL
+            valueFrom:
+              configMapKeyRef:
+                name: monitoring-service-config
+                key: LOG_LEVEL
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: monitoring-service-secret
+                key: DB_USER
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: monitoring-service-secret
+                key: DB_PASSWORD
+          - name: API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: monitoring-service-secret
+                key: API_KEY
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+      imagePullSecrets:
+      - name: docker-hub
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitoring-service-service
+spec:
+  type: NodePort
+  selector:
+    app: monitoring-service
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+    nodePort: 30009

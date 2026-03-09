@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config-dev
+data:
+  APP_ENV: "dev"
+  LOG_LEVEL: "INFO"

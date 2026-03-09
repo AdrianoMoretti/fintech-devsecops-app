@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: reporting-service-config
-data:
-  APP_NAME: "reporting-service"
-  APP_ENV: "production"
-  LOG_LEVEL: "info"
-  SERVICE_PORT: "5000"

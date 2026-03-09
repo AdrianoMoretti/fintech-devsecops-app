@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: card-service
+  labels:
+    app: card-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: card-service
+  template:
+    metadata:
+      labels:
+        app: card-service
+    spec:
+      containers:
+      - name: card-service
+        image: docker.io/adrianomoretti/fintech-devsecops-app:card-service
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        env:
+          - name: APP_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: card-service-config
+                key: APP_NAME
+          - name: APP_ENV
+            valueFrom:
+              configMapKeyRef:
+                name: card-service-config
+                key: APP_ENV
+          - name: LOG_LEVEL
+            valueFrom:
+              configMapKeyRef:
+                name: card-service-config
+                key: LOG_LEVEL
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: card-service-secret
+                key: DB_USER
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: card-service-secret
+                key: DB_PASSWORD
+          - name: API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: card-service-secret
+                key: API_KEY
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+      imagePullSecrets:
+      - name: docker-hub
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: card-service-service
+spec:
+  type: NodePort
+  selector:
+    app: card-service
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+    nodePort: 30004
