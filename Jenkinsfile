@@ -5,6 +5,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub')
         IMAGE_NAME = "adrianomoretti/fintech-devsecops-app"
         IMAGE_TAG = "latest"
+        KUBECONFIG = "/var/lib/jenkins/.kube/config" // variável para kubectl
     }
 
     stages {
@@ -27,8 +28,8 @@ pipeline {
         stage('Security Scan') {
             steps {
                 script {
-                    // Executa Trivy no container
-                    sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image || true ${IMAGE_NAME}:${IMAGE_TAG}"
+                    // Executa Trivy mas ignora o exit code para não quebrar pipeline
+                    sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --exit-code 0 ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
@@ -46,6 +47,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
+                    // Usa o KUBECONFIG do Jenkins para aplicar os manifests
                     sh 'kubectl apply -f k8s/deployment.yaml -n default'
                     sh 'kubectl rollout restart deployment fintech-devsecops-app -n default'
                 }
