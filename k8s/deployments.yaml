@@ -35,13 +35,14 @@ kind: Service
 metadata:
   name: account-service-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: account-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30001
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -80,13 +81,14 @@ kind: Service
 metadata:
   name: transaction-service-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: transaction-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30002
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -125,13 +127,14 @@ kind: Service
 metadata:
   name: payment-service-service
 spec:
-  type: ClusterIP
+  type:  NodePort
   selector:
     app: payment-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30003
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -170,13 +173,14 @@ kind: Service
 metadata:
   name: notification-service-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: notification-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30004
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -215,13 +219,14 @@ kind: Service
 metadata:
   name: user-service-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: user-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30005
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -260,13 +265,14 @@ kind: Service
 metadata:
   name: fraud-detection-service-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: fraud-detection-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30006
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -305,13 +311,14 @@ kind: Service
 metadata:
   name: loan-service-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: loan-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30007
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -350,13 +357,14 @@ kind: Service
 metadata:
   name: investment-service-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: investment-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30008
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -395,13 +403,14 @@ kind: Service
 metadata:
   name: reporting-service-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: reporting-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30009
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -440,13 +449,14 @@ kind: Service
 metadata:
   name: auth-service-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: auth-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30010
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -485,13 +495,14 @@ kind: Service
 metadata:
   name: kyc-service-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: kyc-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30011
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -530,13 +541,14 @@ kind: Service
 metadata:
   name: card-service-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: card-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30012
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -575,13 +587,14 @@ kind: Service
 metadata:
   name: wallet-service-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: wallet-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30013
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -620,13 +633,14 @@ kind: Service
 metadata:
   name: api-gateway-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: api-gateway
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30014
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -665,11 +679,12 @@ kind: Service
 metadata:
   name: monitoring-service-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: monitoring-service
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
+    nodePort: 30015
 ---
