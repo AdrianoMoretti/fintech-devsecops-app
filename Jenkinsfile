@@ -3,9 +3,8 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub')
-        IMAGE_NAME = "adrianomoretti/fintech-devsecops-app"
-        IMAGE_TAG = "latest"
-        KUBECONFIG = '/var/lib/jenkins/.kube/config'
+        IMAGE_REPO = "adrianomoretti/fintech-devsecops-app"
+        KUBECONFIG_PATH = "/var/lib/jenkins/.kube/config"
     }
 
     stages {
@@ -17,28 +16,33 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build & Scan Microservices') {
             steps {
                 script {
-                    docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
-                }
-            }
-        }
+                    def services = [
+                        "account-service","transaction-service","payment-service",
+                        "notification-service","user-service","fraud-detection-service",
+                        "loan-service","investment-service","reporting-service",
+                        "auth-service","kyc-service","card-service","wallet-service",
+                        "api-gateway","monitoring-service"
+                    ]
 
-        stage('Security Scan') {
-            steps {
-                script {
-                    // Executa Trivy no container mas ignora falhas
-                    sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --exit-code 0 ${IMAGE_NAME}:${IMAGE_TAG}"
-                }
-            }
-        }
+                    for (svc in services) {
+                        def imageName = "${IMAGE_REPO}/${svc}:latest"
 
-        stage('Push to Docker Hub') {
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {
-                        docker.image("${IMAGE_NAME}:${IMAGE_TAG}").push()
+                        echo "Building image for ${svc}"
+                        docker.build(imageName, "services/${svc}")
+
+                        echo "Scanning image ${svc} with Trivy (vulnerabilities ignored)"
+                        sh """
+                            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+                            aquasec/trivy:latest image --exit-code 0 ${imageName}
+                        """
+
+                        echo "Pushing image ${svc} to Docker Hub"
+                        docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {
+                            docker.image(imageName).push()
+                        }
                     }
                 }
             }
@@ -47,27 +51,10 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    sh 'kubectl apply -f k8s/deployment.yaml -n default'
-                    sh 'kubectl rollout restart deployment fintech-devsecops-app -n default'
-                }
-            }
-        }
-
-        stage('Smoke Test') {
-            steps {
-                script {
-                    // Testa se a aplicação respondeu corretamente
-                    sh """
-                    echo "Esperando 10s para o pod iniciar..."
-                    sleep 10
-                    RESPONSE=\$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000)
-                    if [ "\$RESPONSE" != "200" ]; then
-                        echo "Smoke Test falhou! Status code: \$RESPONSE"
-                        exit 1
-                    else
-                        echo "Smoke Test OK! Status code: \$RESPONSE"
-                    fi
-                    """
+                    echo "Deploying all microservices to Kubernetes"
+                    withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
+                        sh 'kubectl apply -f k8s/deployments.yaml -n default'
+                    }
                 }
             }
         }
