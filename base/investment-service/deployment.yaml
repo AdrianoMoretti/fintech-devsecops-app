@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: investment-service
+  labels:
+    app: investment-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: investment-service
+  template:
+    metadata:
+      labels:
+        app: investment-service
+    spec:
+      containers:
+      - name: investment-service
+        image: docker.io/adrianomoretti/fintech-devsecops-app:investment-service
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+      imagePullSecrets:
+      - name: dockerhub-secret
