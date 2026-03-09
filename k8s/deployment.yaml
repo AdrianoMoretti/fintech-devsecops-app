@@ -28,7 +28,7 @@ spec:
             cpu: "500m"
       # Adicione este bloco para autenticação no Docker Hub
       imagePullSecrets:
-      - name: dockerhub-secret
+      - name: docker-hub
 ---
 apiVersion: v1
 kind: Service
