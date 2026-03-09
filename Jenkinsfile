@@ -2,12 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('docker-hub')
+        DOCKERHUB_CREDENTIALS = 'docker-hub'
         IMAGE_REPO = "adrianomoretti/fintech-devsecops-app"
         KUBECONFIG_PATH = "/var/lib/jenkins/.kube/config"
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 git branch: 'main',
@@ -19,6 +20,7 @@ pipeline {
         stage('Build & Scan Microservices') {
             steps {
                 script {
+
                     def services = [
                         "account-service","transaction-service","payment-service",
                         "notification-service","user-service","fraud-detection-service",
@@ -28,20 +30,25 @@ pipeline {
                     ]
 
                     for (svc in services) {
-                        def imageName = "${IMAGE_REPO}/${svc}:latest"
 
-                        echo "Building image for ${svc}"
-                        docker.build(imageName, "services/${svc}")
+                        def imageTag = "${IMAGE_REPO}:${svc}"
 
-                        echo "Scanning image ${svc} with Trivy (vulnerabilities ignored)"
+                        echo "Building ${svc}"
+
+                        docker.build(imageTag, "services/${svc}")
+
+                        echo "Scanning ${svc} with Trivy"
+
                         sh """
-                            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-                            aquasec/trivy:latest image --exit-code 0 ${imageName}
+                        docker run --rm \
+                        -v /var/run/docker.sock:/var/run/docker.sock \
+                        aquasec/trivy:latest image --exit-code 0 ${imageTag}
                         """
 
-                        echo "Pushing image ${svc} to Docker Hub"
-                        docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {
-                            docker.image(imageName).push()
+                        echo "Pushing ${svc} image"
+
+                        docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
+                            docker.image(imageTag).push()
                         }
                     }
                 }
@@ -51,9 +58,15 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    echo "Deploying all microservices to Kubernetes"
+
+                    echo "Deploying to Kubernetes"
+
                     withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
-                        sh 'kubectl apply -f k8s/deployments.yaml -n default'
+
+                        sh """
+                        kubectl apply -f k8s/deployments.yaml
+                        """
+
                     }
                 }
             }
@@ -62,10 +75,11 @@ pipeline {
 
     post {
         always {
-            echo "Pipeline finalizado. Status: ${currentBuild.currentResult}"
+            echo "Pipeline finalizado: ${currentBuild.currentResult}"
         }
+
         failure {
-            echo "Pipeline falhou. Verifique os logs para detalhes."
+            echo "Pipeline falhou. Verifique os logs."
         }
     }
 }

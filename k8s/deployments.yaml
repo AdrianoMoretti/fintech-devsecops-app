@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: account-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/account-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:account-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -61,7 +61,7 @@ spec:
     spec:
       containers:
       - name: transaction-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/transaction-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:transaction-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -106,7 +106,7 @@ spec:
     spec:
       containers:
       - name: payment-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/payment-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:payment-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -151,7 +151,7 @@ spec:
     spec:
       containers:
       - name: notification-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/notification-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:notification-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -196,7 +196,7 @@ spec:
     spec:
       containers:
       - name: user-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/user-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:user-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -241,7 +241,7 @@ spec:
     spec:
       containers:
       - name: fraud-detection-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/fraud-detection-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:fraud-detection-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -286,7 +286,7 @@ spec:
     spec:
       containers:
       - name: loan-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/loan-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:loan-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -331,7 +331,7 @@ spec:
     spec:
       containers:
       - name: investment-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/investment-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:investment-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -376,7 +376,7 @@ spec:
     spec:
       containers:
       - name: reporting-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/reporting-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:reporting-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -421,7 +421,7 @@ spec:
     spec:
       containers:
       - name: auth-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/auth-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:auth-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -466,7 +466,7 @@ spec:
     spec:
       containers:
       - name: kyc-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/kyc-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:kyc-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -511,7 +511,7 @@ spec:
     spec:
       containers:
       - name: card-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/card-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:card-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -556,7 +556,7 @@ spec:
     spec:
       containers:
       - name: wallet-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/wallet-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:wallet-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -601,7 +601,7 @@ spec:
     spec:
       containers:
       - name: api-gateway
-        image: docker.io/adrianomoretti/fintech-devsecops-app/api-gateway:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:api-gateway
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -646,7 +646,7 @@ spec:
     spec:
       containers:
       - name: monitoring-service
-        image: docker.io/adrianomoretti/fintech-devsecops-app/monitoring-service:latest
+        image: docker.io/adrianomoretti/fintech-devsecops-app:monitoring-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
