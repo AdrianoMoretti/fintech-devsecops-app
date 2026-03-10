@@ -60,17 +60,3 @@ spec:
             cpu: "500m"
       imagePullSecrets:
       - name: docker-hub
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: kyc-service-service
-spec:
-  type: NodePort
-  selector:
-    app: kyc-service
-  ports:
-  - protocol: TCP
-    port: 5000
-    targetPort: 5000
-    nodePort: 30007

@@ -1,0 +1,3 @@
+APP_NAME=reporting-service
+APP_ENV=dev
+LOG_LEVEL=info

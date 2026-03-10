@@ -9,30 +9,24 @@ resources:
 configMapGenerator:
   - name: dev-config
     files:
-      - ../../../configmaps/account-service-configmap.yaml
-      - ../../../configmaps/api-gateway-configmap.yaml
-      - ../../../configmaps/auth-service-configmap.yaml
-      - ../../../configmaps/card-service-configmap.yaml
-      - ../../../configmaps/fraud-detection-service-configmap.yaml
-      - ../../../configmaps/investment-service-configmap.yaml
-      - ../../../configmaps/kyc-service-configmap.yaml
-      - ../../../configmaps/loan-service-configmap.yaml
-      - ../../../configmaps/monitoring-service-configmap.yaml
-      - ../../../configmaps/notification-service-configmap.yaml
-      - ../../../configmaps/payment-service-configmap.yaml
-      - ../../../configmaps/reporting-service-configmap.yaml
-      - ../../../configmaps/transaction-service-configmap.yaml
-      - ../../../configmaps/user-service-configmap.yaml
-      - ../../../configmaps/wallet-service-configmap.yaml
+      - ./configmaps/account-service-configmap.yaml
+      - ./configmaps/api-gateway-configmap.yaml
+      - ./configmaps/auth-service-configmap.yaml
+      - ./configmaps/card-service-configmap.yaml
+      - ./configmaps/fraud-detection-service-configmap.yaml
+      - ./configmaps/investment-service-configmap.yaml
+      - ./configmaps/kyc-service-configmap.yaml
+      - ./configmaps/loan-service-configmap.yaml
+      - ./configmaps/monitoring-service-configmap.yaml
+      - ./configmaps/notification-service-configmap.yaml
+      - ./configmaps/payment-service-configmap.yaml
+      - ./configmaps/reporting-service-configmap.yaml
+      - ./configmaps/transaction-service-configmap.yaml
+      - ./configmaps/user-service-configmap.yaml
+      - ./configmaps/wallet-service-configmap.yaml
 
 # usa secrets (substituir no ArgoCD ou no cluster, não colocar direto no repo)
 secretGenerator:
-  - name: docker-hub
-    behavior: merge
-  - name: github-token
-    behavior: merge
-# imagens (opcional, se você quiser sobrescrever tags específicas)
-images:
   - name: docker.io/adrianomoretti/fintech-devsecops-app
     newTag: latest
 

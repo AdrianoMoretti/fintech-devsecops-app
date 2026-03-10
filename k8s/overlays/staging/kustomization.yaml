@@ -10,12 +10,6 @@ configMapGenerator:\n      - ./configmaps/account-service-configmap.yaml\n      
 
 # usa secrets já criados no cluster
 secretGenerator:
-  - name: docker-hub
-    behavior: merge
-  - name: github-token
-    behavior: merge
-# imagens (opcional, se você quiser sobrescrever tags específicas)
-images:
   - name: docker.io/adrianomoretti/fintech-devsecops-app
     newTag: latest
 

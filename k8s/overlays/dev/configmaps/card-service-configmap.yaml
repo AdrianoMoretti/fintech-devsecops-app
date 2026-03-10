@@ -1,0 +1,3 @@
+APP_NAME=card-service
+APP_ENV=dev
+LOG_LEVEL=info

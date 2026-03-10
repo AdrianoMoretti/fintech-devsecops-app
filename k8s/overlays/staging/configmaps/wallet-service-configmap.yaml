@@ -1,0 +1,3 @@
+APP_NAME=wallet-service
+APP_ENV=dev
+LOG_LEVEL=info

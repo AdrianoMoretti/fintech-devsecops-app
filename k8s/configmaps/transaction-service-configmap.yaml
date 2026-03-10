@@ -1,0 +1,3 @@
+APP_NAME=transaction-service
+APP_ENV=dev
+LOG_LEVEL=info
