@@ -1,15 +1,29 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-# referência à base de deployments
 resources:
   - ../../base
 
-# adiciona ConfigMaps específicos do staging
-configMapGenerator:\n      - ./configmaps/account-service-configmap.yaml\n      - ./configmaps/api-gateway-configmap.yaml\n      - ./configmaps/auth-service-configmap.yaml\n      - ./configmaps/card-service-configmap.yaml\n      - ./configmaps/fraud-detection-service-configmap.yaml\n      - ./configmaps/investment-service-configmap.yaml\n      - ./configmaps/kyc-service-configmap.yaml\n      - ./configmaps/loan-service-configmap.yaml\n      - ./configmaps/monitoring-service-configmap.yaml\n      - ./configmaps/notification-service-configmap.yaml\n      - ./configmaps/payment-service-configmap.yaml\n      - ./configmaps/reporting-service-configmap.yaml\n      - ./configmaps/transaction-service-configmap.yaml\n      - ./configmaps/user-service-configmap.yaml\n      - ./configmaps/wallet-service-configmap.yaml
+configMapGenerator:
+  - name: staging-config
+    files:
+      - ./configmaps/account-service-configmap.yaml
+      - ./configmaps/api-gateway-configmap.yaml
+      - ./configmaps/auth-service-configmap.yaml
+      - ./configmaps/card-service-configmap.yaml
+      - ./configmaps/fraud-detection-service-configmap.yaml
+      - ./configmaps/investment-service-configmap.yaml
+      - ./configmaps/kyc-service-configmap.yaml
+      - ./configmaps/loan-service-configmap.yaml
+      - ./configmaps/monitoring-service-configmap.yaml
+      - ./configmaps/notification-service-configmap.yaml
+      - ./configmaps/payment-service-configmap.yaml
+      - ./configmaps/reporting-service-configmap.yaml
+      - ./configmaps/transaction-service-configmap.yaml
+      - ./configmaps/user-service-configmap.yaml
+      - ./configmaps/wallet-service-configmap.yaml
 
-# usa secrets já criados no cluster
-secretGenerator:
+images:
   - name: docker.io/adrianomoretti/fintech-devsecops-app
     newTag: latest
 

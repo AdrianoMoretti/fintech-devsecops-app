@@ -1,11 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-# referência à base de deployments
 resources:
   - ../../base
 
-# adiciona ConfigMaps específicos do dev
 configMapGenerator:
   - name: dev-config
     files:
@@ -25,8 +23,7 @@ configMapGenerator:
       - ./configmaps/user-service-configmap.yaml
       - ./configmaps/wallet-service-configmap.yaml
 
-# usa secrets (substituir no ArgoCD ou no cluster, não colocar direto no repo)
-secretGenerator:
+images:
   - name: docker.io/adrianomoretti/fintech-devsecops-app
     newTag: latest
 
