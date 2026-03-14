@@ -1,3 +1,0 @@
-APP_NAME=fraud-detection-service
-APP_ENV=dev
-LOG_LEVEL=info

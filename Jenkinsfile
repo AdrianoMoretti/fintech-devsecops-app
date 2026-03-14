@@ -2,72 +2,84 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = 'docker-hub'
-        IMAGE_REPO = "adrianomoretti/fintech-devsecops-app"
-        KUBECONFIG_PATH = "/var/lib/jenkins/.kube/config"
+        // Credenciais criadas no Jenkins
+        GIT_CREDENTIALS = 'github-token'          // Credential do GitHub
+        DOCKER_CREDENTIALS = 'dockerhub-token'    // Credential do Docker Hub
+        ARGOCD_TOKEN = credentials('argocd-token') // Secret Text do ArgoCD (Service Account token)
+
+        // Endereço do ArgoCD (NodePort exposto no cluster)
+        ARGOCD_SERVER = 'https://192.168.232.129:30569' // Substitua pelo NodePort ou Ingress se tiver
+
+        // Nome da aplicação e namespaces
+        APP_NAME = 'fintech-app'
+        NAMESPACE_DEV = 'dev'
+        NAMESPACE_STAGING = 'staging'
+        NAMESPACE_PROD = 'prod'
+
+        // Tag da imagem Docker baseada no número do build
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/AdrianoMoretti/fintech-devsecops-app.git',
-                    credentialsId: 'github-token'
+                git branch: 'main', credentialsId: "${GIT_CREDENTIALS}", url: 'git@github.com:adrianomoretti/fintech-repo.git'
             }
         }
 
-        stage('Build & Scan Microservices') {
+        stage('Build & Push Docker Image') {
             steps {
                 script {
-
-                    def services = [
-                        "account-service","transaction-service","payment-service",
-                        "notification-service","user-service","fraud-detection-service",
-                        "loan-service","investment-service","reporting-service",
-                        "auth-service","kyc-service","card-service","wallet-service",
-                        "api-gateway","monitoring-service"
-                    ]
-
-                    for (svc in services) {
-
-                        def imageTag = "${IMAGE_REPO}:${svc}"
-
-                        echo "Building ${svc}"
-
-                        docker.build(imageTag, "services/${svc}")
-
-                        echo "Scanning ${svc} with Trivy"
-
-                        sh """
-                        docker run --rm \
-                        -v /var/run/docker.sock:/var/run/docker.sock \
-                        aquasec/trivy:latest image --exit-code 0 ${imageTag}
-                        """
-
-                        echo "Pushing ${svc} image"
-
-                        docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-                            docker.image(imageTag).push()
-                        }
+                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS}") {
+                        def img = docker.build("adrianomoretti/${APP_NAME}:${IMAGE_TAG}")
+                        img.push()
                     }
                 }
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Deploy to Dev') {
             steps {
                 script {
+                    sh """
+                    # Login no ArgoCD
+                    argocd login ${ARGOCD_SERVER} --username jenkins-sa --password ${ARGOCD_TOKEN} --insecure
 
-                    echo "Deploying to Kubernetes"
+                    # Atualiza a aplicação dev e sincroniza
+                    argocd app set ${APP_NAME}-dev --repo https://github.com/adrianomoretti/fintech-repo.git --path k8s/dev --dest-server https://kubernetes.default.svc --dest-namespace ${NAMESPACE_DEV}
+                    argocd app sync ${APP_NAME}-dev
+                    """
+                }
+            }
+        }
 
-                    withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
+        stage('Deploy to Staging') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    sh """
+                    argocd login ${ARGOCD_SERVER} --username jenkins-sa --password ${ARGOCD_TOKEN} --insecure
+                    argocd app set ${APP_NAME}-staging --repo https://github.com/adrianomoretti/fintech-repo.git --path k8s/staging --dest-server https://kubernetes.default.svc --dest-namespace ${NAMESPACE_STAGING}
+                    argocd app sync ${APP_NAME}-staging
+                    """
+                }
+            }
+        }
 
-                        sh """
-                        kubectl apply -f k8s/deployments.yaml
-                        """
-
-                    }
+        stage('Deploy to Prod') {
+            when {
+                branch 'release/*'
+            }
+            steps {
+                script {
+                    sh """
+                    argocd login ${ARGOCD_SERVER} --username jenkins-sa --password ${ARGOCD_TOKEN} --insecure
+                    argocd app set ${APP_NAME}-prod --repo https://github.com/adrianomoretti/fintech-repo.git --path k8s/prod --dest-server https://kubernetes.default.svc --dest-namespace ${NAMESPACE_PROD}
+                    argocd app sync ${APP_NAME}-prod
+                    """
                 }
             }
         }
@@ -75,11 +87,7 @@ pipeline {
 
     post {
         always {
-            echo "Pipeline finalizado: ${currentBuild.currentResult}"
-        }
-
-        failure {
-            echo "Pipeline falhou. Verifique os logs."
+            echo "Pipeline finalizada para build ${IMAGE_TAG}"
         }
     }
 }
