@@ -4,19 +4,15 @@ kind: Kustomization
 namespace: dev
 
 resources:
-- ../../base
+- ../../../base/payment-service
 
 configMapGenerator:
 - files:
-  - ./configmaps/account-service-configmap.yaml
-  - ./configmaps/api-gateway-configmap.yaml
-  - ./configmaps/auth-service-configmap.yaml
   - ./configmaps/payment-service-configmap.yaml
-  - ./configmaps/user-service-configmap.yaml
   name: dev-config
 
 images:
-- name: docker.io/adrianomoretti/fintech-devsecops-app
+- name: docker.io/adrianomoretti/payment-service
   newTag: latest
 
 generatorOptions:

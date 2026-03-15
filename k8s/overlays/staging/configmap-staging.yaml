@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: app-config-staging
-data:
-  APP_ENV: "staging"
-  LOG_LEVEL: "INFO"

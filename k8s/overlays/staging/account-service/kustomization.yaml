@@ -4,23 +4,16 @@ kind: Kustomization
 namespace: staging
 
 resources:
-- ../../base
-
-
+- ../../../base/account-service
 
 configMapGenerator:
 - files:
   - ./configmaps/account-service-configmap.yaml
-  - ./configmaps/api-gateway-configmap.yaml
-  - ./configmaps/auth-service-configmap.yaml
-  - ./configmaps/payment-service-configmap.yaml
-  - ./configmaps/user-service-configmap.yaml
   name: staging-config
 
 images:
-- name: docker.io/adrianomoretti/fintech-devsecops-app
+- name: docker.io/adrianomoretti/account-service
   newTag: latest
 
 generatorOptions:
   disableNameSuffixHash: true
-

@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dev
+
+resources:
+- ../../../base/account-service
+
+configMapGenerator:
+- files:
+  - ./configmaps/account-service-configmap.yaml
+  name: dev-config
+
+images:
+- name: docker.io/adrianomoretti/account-service
+  newTag: latest
+
+generatorOptions:
+  disableNameSuffixHash: true
