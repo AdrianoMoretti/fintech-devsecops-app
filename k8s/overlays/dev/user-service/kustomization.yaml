@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ../../../base/ user-service
+- ../../../base/user-service
 
 patchesStrategicMerge:
 - user-service--resources-patch.yaml
@@ -13,5 +13,5 @@ configMapGenerator:
   - ./configmaps/user-service-configmap.yaml
 
 images:
-- name: docker.io/adrianomoretti/ user-service
+- name: docker.io/adrianomoretti/user-service
   newTag: latest
