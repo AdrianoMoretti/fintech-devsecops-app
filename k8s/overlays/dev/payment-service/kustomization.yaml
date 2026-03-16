@@ -10,8 +10,8 @@ patchesStrategicMerge:
 configMapGenerator:
 - name: payment-service-config
   files:
-  - ./configmaps/ payment-service-configmap.yaml
+  - ./configmaps/payment-service-configmap.yaml
 
 images:
-- name: docker.io/adrianomoretti/ payment-service
+- name: docker.io/adrianomoretti/payment-service
   newTag: latest
