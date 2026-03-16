@@ -8,9 +8,9 @@ patchesStrategicMerge:
 - account-service-resources-patch.yaml
 
 configMapGenerator:
-  name: account-service-config
+- name: account-service-config
   files:
-  -./configmaps/ account-service-configmap.yaml
+  - ./configmaps/account-service-configmap.yaml
 
 images:
 - name: docker.io/adrianomoretti/account-service
