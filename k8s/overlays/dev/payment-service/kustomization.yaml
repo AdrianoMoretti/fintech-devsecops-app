@@ -7,9 +7,11 @@ resources:
 patchesStrategicMerge:
 - payment-service--resources-patch.yaml
 
-images:
-- name: docker.io/adrianomoretti/payment-service
-  newTag: latest
+configMapGenerator:
+- name: payment-service-config
+  files:
+  - ./configmaps/ payment-service-configmap.yaml
 
-generatorOptions:
-  disableNameSuffixHash: true
+images:
+- name: docker.io/adrianomoretti/ payment-service
+  newTag: latest
