@@ -7,9 +7,11 @@ resources:
 patchesStrategicMerge:
 - account-service-resources-patch.yaml
 
+configMapGenerator:
+- name: account-service-config
+  files:
+  - ./configmaps/account-service-configmap.yaml
+
 images:
 - name: docker.io/adrianomoretti/account-service
   newTag: latest
-
-generatorOptions:
-  disableNameSuffixHash: true

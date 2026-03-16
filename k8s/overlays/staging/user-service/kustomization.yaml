@@ -5,11 +5,13 @@ resources:
 - ../../../base/user-service
 
 patchesStrategicMerge:
-- user-service--resources-patch.yaml
+- userservice-t-service-resources-patch.yaml
+
+configMapGenerator:
+- name: user-service-config
+  files:
+  - ./configmaps/user-service-configmap.yaml
 
 images:
 - name: docker.io/adrianomoretti/user-service
   newTag: latest
-
-generatorOptions:
-  disableNameSuffixHash: true

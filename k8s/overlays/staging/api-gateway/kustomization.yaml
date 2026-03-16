@@ -5,11 +5,13 @@ resources:
 - ../../../base/api-gateway
 
 patchesStrategicMerge:
-- api-gateway--resources-patch.yaml
+- api-gateway-resources-patch.yaml
+
+configMapGenerator:
+- name: api-gateway-config
+  files:
+  - ./configmaps/api-gateway-configmap.yaml
 
 images:
 - name: docker.io/adrianomoretti/api-gateway
   newTag: latest
-
-generatorOptions:
-  disableNameSuffixHash: true

@@ -7,9 +7,11 @@ resources:
 patchesStrategicMerge:
 - auth-service--resources-patch.yaml
 
+configMapGenerator:
+- name: auth-service-config
+  files:
+  - ./configmaps/auth-service-configmap.yaml
+
 images:
 - name: docker.io/adrianomoretti/auth-service
   newTag: latest
-
-generatorOptions:
-  disableNameSuffixHash: true
