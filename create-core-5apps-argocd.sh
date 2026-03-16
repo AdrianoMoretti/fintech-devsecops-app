@@ -1,43 +1,52 @@
 #!/bin/bash
+# create-core-5apps-argocd.sh - Cria apps no ArgoCD para dev, staging e prod
+# Autor: Você
+# Data: 2026-03-14
 
-# Variáveis gerais
+set -e
+
+# Configurações
 REPO="https://github.com/adrianomoretti/fintech-devsecops-app.git"
-SERVER="https://kubernetes.default.svc"
-PROJECT="default"
-INSECURE="--insecure"
-
-# Lista de ambientes
+SERVICES=("account-service" "payment-service" "user-service" "api-gateway" "auth-service")
 ENVS=("dev" "staging" "prod")
+PROJECT="default"
 
-for ENV in "${ENVS[@]}"; do
-  APP_NAME="core-services-${ENV}"  # um único app por ambiente
-  PATH_APP="k8s/overlays/${ENV}"
+# Função para criar ou sincronizar app
+create_or_sync_app() {
+    local service=$1
+    local env=$2
+    local path="k8s/overlays/$env/$service"
+    local app_name="${service}-${env}"
 
-  echo "-----------------------------"
-  echo "Criando ou atualizando app: $APP_NAME"
-  echo "-----------------------------"
+    echo "--------------------------------"
+    echo "Processando $app_name"
+    echo "Path: $path"
+    echo "--------------------------------"
 
-  # Verifica se o app já existe
-  EXISTS=$(kubectl get app -n argocd "$APP_NAME" --ignore-not-found)
+    # Checa se já existe
+    if argocd app get "$app_name" &>/dev/null; then
+        echo "App já existe. Sincronizando..."
+        argocd app sync "$app_name"
+    else
+        echo "Criando aplicação..."
+        argocd app create "$app_name" \
+            --repo "$REPO" \
+            --path "$path" \
+            --dest-server https://kubernetes.default.svc \
+            --dest-namespace "$env" \
+            --project "$PROJECT" \
+            --sync-policy automated
+    fi
+    echo
+}
 
-  if [ -z "$EXISTS" ]; then
-    echo "App $APP_NAME não existe. Criando..."
-    argocd app create "$APP_NAME" \
-      --repo "$REPO" \
-      --path "$PATH_APP" \
-      --dest-server "$SERVER" \
-      --dest-namespace "$ENV" \
-      --project "$PROJECT" \
-      --sync-policy automated \
-      $INSECURE
-  else
-    echo "App $APP_NAME já existe, pulando criação..."
-  fi
-
-  # Força o sync do app
-  echo "Sincronizando app $APP_NAME..."
-  argocd app sync "$APP_NAME" $INSECURE
-  echo
+# Loop em cada serviço e ambiente
+for env in "${ENVS[@]}"; do
+    for service in "${SERVICES[@]}"; do
+        create_or_sync_app "$service" "$env"
+    done
 done
 
-echo "Todos os apps processados."
+echo "--------------------------------"
+echo "Todos os apps processados"
+echo "--------------------------------"

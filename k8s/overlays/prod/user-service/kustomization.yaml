@@ -1,15 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: prod
-
 resources:
 - ../../../base/user-service
 
-configMapGenerator:
-- files:
-  - ./configmaps/user-service-configmap.yaml
-  name: prod-config
+patchesStrategicMerge:
+- user-service--resources-patch.yaml
 
 images:
 - name: docker.io/adrianomoretti/user-service
