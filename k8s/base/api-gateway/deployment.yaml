@@ -20,6 +20,8 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
+      imagePullSecrets:
+      - name: docker-hub
         env:
           - name: APP_NAME
             valueFrom:
@@ -51,5 +53,3 @@ spec:
               secretKeyRef:
                 name: api-gateway-secret
                 key: API_KEY
-      imagePullSecrets:
-      - name: docker-hub
