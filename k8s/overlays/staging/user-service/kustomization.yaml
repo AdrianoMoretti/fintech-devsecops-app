@@ -5,7 +5,7 @@ resources:
 - ../../../base/user-service
 
 patchesStrategicMerge:
-- userservice-t-service-resources-patch.yaml
+- user-service--resources-patch.yaml
 
 configMapGenerator:
 - name: user-service-config
