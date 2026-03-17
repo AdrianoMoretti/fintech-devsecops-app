@@ -14,42 +14,43 @@ spec:
       labels:
         app: api-gateway
     spec:
+      imagePullSecrets:
+      - name: docker-hub
+
       containers:
       - name: api-gateway
         image: docker.io/adrianomoretti/fintech-devsecops-app:api-gateway
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
-      imagePullSecrets:
-      - name: docker-hub
         env:
-          - name: APP_NAME
-            valueFrom:
-              configMapKeyRef:
-                name: api-gateway-config
-                key: APP_NAME
-          - name: APP_ENV
-            valueFrom:
-              configMapKeyRef:
-                name: api-gateway-config
-                key: APP_ENV
-          - name: LOG_LEVEL
-            valueFrom:
-              configMapKeyRef:
-                name: api-gateway-config
-                key: LOG_LEVEL
-          - name: DB_USER
-            valueFrom:
-              secretKeyRef:
-                name: api-gateway-secret
-                key: DB_USER
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: api-gateway-secret
-                key: DB_PASSWORD
-          - name: API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: api-gateway-secret
-                key: API_KEY
+        - name: APP_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: api-gateway-config
+              key: APP_NAME
+        - name: APP_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: api-gateway-config
+              key: APP_ENV
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: api-gateway-config
+              key: LOG_LEVEL
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: api-gateway-secret
+              key: DB_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: api-gateway-secret
+              key: DB_PASSWORD
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: api-gateway-secret
+              key: API_KEY

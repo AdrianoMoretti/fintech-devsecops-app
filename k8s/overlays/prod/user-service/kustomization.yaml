@@ -1,19 +1,19 @@
+
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ../../../base/user-service
-
-patchesStrategicMerge:
-- user-service--resources-patch.yaml
+  - ../../../base/user-service
 
 configMapGenerator:
 - name: user-service-config
-  files:
-  - ./configmaps/user-service-configmap.yaml
+  literals:
+    - APP_NAME=user-service
+    - APP_ENV=prod
+    - LOG_LEVEL=info
+  options:
+    disableNameSuffixHash: true
 
 images:
 - name: docker.io/adrianomoretti/user-service
   newTag: latest
-
-

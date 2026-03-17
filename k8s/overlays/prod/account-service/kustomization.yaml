@@ -2,15 +2,16 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ../../../base/account-service
-
-patchesStrategicMerge:
-- account-service-resources-patch.yaml
+  - ../../../base/account-service
 
 configMapGenerator:
 - name: account-service-config
-  files:
-  - ./configmaps/account-service-configmap.yaml
+  literals:
+    - APP_NAME=account-service
+    - APP_ENV=prod
+    - LOG_LEVEL=info
+  options:
+    disableNameSuffixHash: true
 
 images:
 - name: docker.io/adrianomoretti/account-service
