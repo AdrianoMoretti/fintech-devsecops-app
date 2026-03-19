@@ -1,0 +1,89 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: account-service
+  labels:
+    release: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+    - dev
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: account-service-dev
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: api-gateway
+  labels:
+    release: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+    - dev
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: api-gateway-dev
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: auth-service
+  labels:
+    release: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+    - dev
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: auth-service-dev
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: payment-service
+  labels:
+    release: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+    - dev
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: payment-service-dev
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: user-service
+  labels:
+    release: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+    - dev
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: user-service-dev
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
